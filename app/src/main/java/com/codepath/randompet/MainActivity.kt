@@ -2,10 +2,14 @@ package com.codepath.randompet
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.Button
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.bumptech.glide.Glide
 
 import com.codepath.asynchttpclient.AsyncHttpClient
 import com.codepath.asynchttpclient.RequestParams
@@ -26,6 +30,11 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         getDogImageURL()
+        getCatImageURL()
+        val button = findViewById<Button>(R.id.petButton)
+        val imageView = findViewById<ImageView>(R.id.imageView)
+
+        getNextImage(button, imageView)
     }
 
     private fun getDogImageURL() {
@@ -36,6 +45,38 @@ class MainActivity : AppCompatActivity() {
                 petImageURL = json.jsonObject.getString("message")
                 Log.d("Dog", "response successful$json")
                 Log.d("petImageURL", "pet image URL set")
+            }
+
+            override fun onFailure(
+                statusCode: Int,
+                headers: Headers?,
+                errorResponse: String,
+                throwable: Throwable?
+            ) {
+                Log.d("Dog Error", errorResponse)
+            }
+        }]
+    }
+
+    private fun getNextImage(button: Button, imageView: ImageView) {
+        button.setOnClickListener {
+//            getDogImageURL()
+            getCatImageURL()
+
+            Glide.with(this)
+                .load(petImageURL)
+                .fitCenter()
+                .into(imageView)
+        }
+    }
+
+    private fun getCatImageURL() {
+        val client = AsyncHttpClient()
+
+        client["https://api.thecatapi.com/v1/images/search", object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Headers, json: JsonHttpResponseHandler.JSON) {
+                var resultsJSON = json.jsonArray.getJSONObject(0)
+                petImageURL = resultsJSON.getString("url")
             }
 
             override fun onFailure(
