@@ -12,10 +12,9 @@ import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 
 import com.codepath.asynchttpclient.AsyncHttpClient
-import com.codepath.asynchttpclient.RequestParams
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
-import com.codepath.asynchttpclient.callback.TextHttpResponseHandler
 import okhttp3.Headers
+import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
     var petImageURL = ""
@@ -60,8 +59,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun getNextImage(button: Button, imageView: ImageView) {
         button.setOnClickListener {
-//            getDogImageURL()
-            getCatImageURL()
+            var choice = Random.nextInt(2)
+
+            if (choice == 0) {
+                getDogImageURL()
+            }
+            else {
+                getCatImageURL()
+            }
 
             Glide.with(this)
                 .load(petImageURL)
@@ -85,7 +90,7 @@ class MainActivity : AppCompatActivity() {
                 errorResponse: String,
                 throwable: Throwable?
             ) {
-                Log.d("Dog Error", errorResponse)
+                Log.d("Cat Error", errorResponse)
             }
         }]
     }
